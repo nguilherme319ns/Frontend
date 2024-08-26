@@ -1,16 +1,25 @@
-import { Button } from "react-bootstrap";
-import Cabecalho from "./components/Cabecalho";
+
+import { Alert, Container } from "react-bootstrap";
+import Cabecalho from "../components/Cabecalho";
 import Link from "next/link";
 
-export default function Home() {
-  return (
-    <main>
-      <Button variant="outline-dark">PRETO</Button>{` `}
-      <Cabecalho titulo ="A sla" sub ="ENTAO COMO QUE É" />
+export default function Fundamentos() {
 
-      <a href="/fundamentos">Pagina Fundamentos </a><br/>
-      <Link href= "/fundamentos">Pagina fundamentos</Link><br/>
+    return (
+        <>
+            <Cabecalho titulo="Fundamentos" />
 
-    </main>
-  );
+            <Container>
+                <Alert>
+                    Atenção! Preste muita atenção.
+                </Alert>
+
+                <Link href="/">Página Inicial</Link><br />
+
+                <h1>Fundamentos</h1>
+                <p>Sucesso</p>
+                <Cabecalho titulo="Cabeçalho de baixo" />
+            </Container>
+        </>
+    )
 }
