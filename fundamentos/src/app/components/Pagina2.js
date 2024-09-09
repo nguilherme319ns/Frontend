@@ -28,4 +28,4 @@ export default function Pagina2(props) {
         </Container>
     </>
     )
-}
+}   
