@@ -1,4 +1,4 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 
 export default function Pagina(props) {
 
@@ -6,19 +6,30 @@ export default function Pagina(props) {
         <>
             <Navbar bg="dark" data-bs-theme="dark">
                 <Container>
-                    <Navbar.Brand href="/">Home</Navbar.Brand>
+                    <Navbar.Brand href="/filmes">Filmes Revisão</Navbar.Brand>
                     <Nav className="me-auto">
-                        <Nav.Link href="/fundamentos">Fundamentos</Nav.Link>
-                        <Nav.Link href="/clientes">Clientes</Nav.Link>
-                        <Nav.Link href="/array">Array</Nav.Link>
-                        <Nav.Link href="/objetos">Carros</Nav.Link>
-                        <Nav.Link href="/nomes">Nomes</Nav.Link>
-                        <Nav.Link href="/numeros">Números</Nav.Link>
+                        <Nav.Link href="/filmes">Filmes Revisão</Nav.Link>
+                        <Nav.Link href="/filmes">Filmes</Nav.Link>
+                        <Nav.Link href="/series">Series</Nav.Link>
+                        <Nav.Link href="/atores">Atores</Nav.Link>
+                        <NavDropdown title="Séries" id="basic-nav-dropdown"> 
+                            <NavDropdown.Item href="/series">
+                                Populares
+                            </NavDropdown.Item>
+                        </NavDropdown>
+                        <NavDropdown title="Filmes" id="basic-nav-dropdown">
+                            <NavDropdown.Item href="./filmes">
+                                Em cartaz
+                            </NavDropdown.Item>
+                            
+                            <NavDropdown.Divider />
+
+                        </NavDropdown>
                     </Nav>
                 </Container>
             </Navbar>
 
-            <div className="bg-secondary text-white text-center p-3">
+            <div className="bg-white text-black text-center p-3">
                 <h1>{props.titulo}</h1>
             </div>
             <Container>
@@ -26,4 +37,4 @@ export default function Pagina(props) {
             </Container>
         </>
     )
-}
+}   
