@@ -4,27 +4,34 @@ import Pagina from "@/app/components/Pagina";
 import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
-import { MdOutlineArrowBack } from "react-icons/md";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { v4 } from "uuid";
 
-export default function Page() {
+export default function Page({ params }) {
+    const route = useRouter();
+    const voos = JSON.parse(localStorage.getItem('voos')) || [];
+    const dados = voos.find(item => item.id == params.id);
+    const voo = dados || { internacional: '', identificador: '', checkin: '', embarque: '', origem: '', destino: '', empresa: '', preco: '' };
 
-    const route = useRouter() //É do next navigation!!!!!
-
-    function salvar(dados){
-        const voos = JSON.parse(localStorage.getItem('voos')) || []
-        voos.push(dados);
-        localStorage.setItem('voos', JSON.stringify(voos))
-        return route.push('/voos') //Depois que salvar, ele volta para a página /empresas
+    function salvar(dados) {
+        if (voo.id) {
+            Object.assign(voo, dados);
+        } else {
+            dados.id = v4();
+            voos.push(dados);
+        }
+        localStorage.setItem('voos', JSON.stringify(voos));
+        return route.push('/voos');
     }
 
     return (
-        <Pagina titulo="Voos">
-
+        <Pagina titulo="Voo">
             <Formik
-                initialValues={{internacional: '', identificador: '', checkin: '', embarque: '', origem: '', destino: '', empresa: '', preco: ''}}
-                onSubmit={values=>salvar(values)}
+                initialValues={voo}
+                onSubmit={values => salvar(values)}
             >
                 {({
                     values,
@@ -109,15 +116,15 @@ export default function Page() {
                                 <FaCheck /> Salvar
                             </Button>
                             <Link
-                                href="/empresas"
+                                href="/voos"
                                 className="btn btn-danger ms-2"
                             >
-                                <MdOutlineArrowBack /> Voltar
+                                <IoIosArrowRoundBack /> Voltar
                             </Link>
                         </div>
                     </Form>
                 )}
             </Formik>
         </Pagina>
-    )
+    );
 }

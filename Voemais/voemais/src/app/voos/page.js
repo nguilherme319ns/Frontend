@@ -1,28 +1,33 @@
 'use client'
 
-import Pagina from "@/app/components/Pagina"
-import Link from "next/link"
-import { Table } from "react-bootstrap"
+import Pagina from "@/app/components/Pagina";
+import Link from "next/link";
+import { Table } from "react-bootstrap";
 import { IoIosAirplane } from "react-icons/io";
+import { FaTrashAlt } from "react-icons/fa";
+import { FaPen } from "react-icons/fa";
+import { useEffect, useState } from "react";
 
 export default function Page() {
+    const [voos, setVoos] = useState([]);
 
-    //Para poder usar o .map em empresas, precisamos passar os dados para uma array, pois o localStorage retorna uma string
-    // const empresas = JSON.parse(localStorage.getItem('empresas'))
+    useEffect(() => {
+        setVoos(JSON.parse(localStorage.getItem('voos')) || []);
+    }, []);
 
-    //COloque dentro da variavel empresas isso(local...) OU isso(no caso é [])
-    let voos = JSON.parse(localStorage.getItem('voos')) || []
-    //OBS: Tem como a gente utilizar o if e else também
+    function excluir(id) {
+        if (confirm('Deseja realmente excluir?')) {
+            const dados = voos.filter(item => item.id !== id);
+            localStorage.setItem('voos', JSON.stringify(dados));
+            setVoos(dados);
+        }
+    }
 
     return (
         <Pagina titulo="Voos">
-
-            <Link
-                href="/voos/create"
-                className="btn btn-primary mb-3"
-            >
-                <IoIosAirplane />
-            </Link>
+            <div className="d-flex justify-content-start mb-3">
+                <Link href="/voos/form" className="btn btn-dark me-2"><IoIosAirplane /> Criar Voo</Link>
+            </div>
 
             <Table striped bordered hover>
                 <thead>
@@ -39,10 +44,17 @@ export default function Page() {
                     </tr>
                 </thead>
                 <tbody>
-                    {voos.map(item => (
-
-                        <tr>
-                            <td>1</td>
+                    {voos.map((item, index) => (
+                        <tr key={item.id}>
+                            <td>
+                                <Link href={`/voos/form/${item.id}`}>
+                                    <FaPen title='Editar' className="ms-2 me-2 text-primary" />
+                                </Link>
+                                <FaTrashAlt
+                                    title='Excluir'
+                                    className="text-danger"
+                                    onClick={() => excluir(item.id)} />
+                            </td>
                             <td>{item.internacional}</td>
                             <td>{item.identificador}</td>
                             <td>{item.checkin}</td>
@@ -56,5 +68,5 @@ export default function Page() {
                 </tbody>
             </Table>
         </Pagina>
-    )
+    );
 }

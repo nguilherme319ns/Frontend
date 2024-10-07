@@ -2,23 +2,33 @@
 
 import Pagina from "@/app/components/Pagina"
 import Link from "next/link"
+import { useEffect, useState } from "react";
 import { Table } from "react-bootstrap"
+import { FaRegEdit } from "react-icons/fa";
 import { IoIosAirplane } from "react-icons/io";
+import { MdDelete } from "react-icons/md";
 
 export default function Page() {
 
-    //Para poder usar o .map em empresas, precisamos passar os dados para uma array, pois o localStorage retorna uma string
-    // const empresas = JSON.parse(localStorage.getItem('empresas'))
+    const [aeroportos, setAeroportos] = useState([])
 
-    //COloque dentro da variavel empresas isso(local...) OU isso(no caso é [])
-    let aeroportos = JSON.parse(localStorage.getItem('aeroportos')) || []
-    //OBS: Tem como a gente utilizar o if e else também
+    useEffect(() => {
+        setAeroportos(JSON.parse(localStorage.getItem('aeroportos')) || [])
+    }, [])
+
+    function excluir(id) {
+        if (confirm('Deseja realmente excluir o registro?')) {
+            const dados = aeroportos.filter(item => item.id != id)
+            localStorage.setItem('aeroportos', JSON.stringify(dados))
+            setAeroportos(dados)
+        }
+    }
 
     return (
         <Pagina titulo="Aeroportos">
 
             <Link
-                href="/aeroportos/create"
+                href="/aeroportos/form"
                 className="btn btn-primary mb-3"
             >
                 <IoIosAirplane />
@@ -37,9 +47,17 @@ export default function Page() {
                 </thead>
                 <tbody>
                     {aeroportos.map(item => (
-
-                        <tr>
-                            <td>1</td>
+                        <tr key={item.id}>
+                            <td>
+                                <Link href={`/aeroportos/form/${item.id}`}>
+                                    <FaRegEdit title="Editar" className="text-primary" />
+                                </Link>
+                                <MdDelete
+                                    title="Excluir"
+                                    className="text-danger"
+                                    onClick={() => excluir(item.id)}
+                                />
+                            </td>
                             <td>{item.nome}</td>
                             <td>{item.sigla}</td>
                             <td>{item.uf}</td>

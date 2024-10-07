@@ -4,26 +4,39 @@ import Pagina from "@/app/components/Pagina";
 import { Formik } from "formik";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { MdOutlineArrowBack } from "react-icons/md";
+import { v4 } from "uuid";
 
-export default function Page() {
+export default function Page({params}) {
 
-    const route = useRouter() //É do next navigation!!!!!
+    const route = useRouter()
+
+    const aeroportos = JSON.parse(localStorage.getItem('aeroportos')) || []
+    const dados = aeroportos.find(item => item.id == params.id)
+    const aeroporto = dados || {nome: '', sigla: '', uf: '', cidade: '', pais: ''}
 
     function salvar(dados){
-        const passageiros = JSON.parse(localStorage.getItem('passageiros')) || []
-        passageiros.push(dados);
-        localStorage.setItem('passageiros', JSON.stringify(passageiros))
-        return route.push('/passageiros') //Depois que salvar, ele volta para a página /empresas
+        
+        if(aeroporto.id){
+            Object.assign(aeroporto, dados)
+        } else {
+            dados.id = v4()
+            aeroportos.push(dados)
+        }
+
+        localStorage.setItem('aeroportos', JSON.stringify(aeroportos))
+        return route.push('/aeroportos')
+        
     }
 
     return (
-        <Pagina titulo="Passageiros">
+        <Pagina titulo="Aeroporto">
 
             <Formik
-                initialValues={{nome: '', documento: '', email: '', telefone: '', nascimento: ''}}
+                initialValues={aeroporto}
                 onSubmit={values=>salvar(values)}
             >
                 {({
@@ -41,40 +54,40 @@ export default function Page() {
                                 onChange={handleChange('nome')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="documento">
-                            <Form.Label>Documento</Form.Label>
+                        <Form.Group className="mb-3" controlId="sigla">
+                            <Form.Label>Sigla</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                name="documento"
-                                value={values.documento}
-                                onChange={handleChange('documento')}
+                                name="sigla"
+                                value={values.sigla}
+                                onChange={handleChange('sigla')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="email">
-                            <Form.Label>Email</Form.Label>
+                        <Form.Group className="mb-3" controlId="uf">
+                            <Form.Label>UF</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                name="email"
+                                name="uf"
                                 value={values.uf}
-                                onChange={handleChange('email')}
+                                onChange={handleChange('uf')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="telefone">
-                            <Form.Label>Telefone</Form.Label>
+                        <Form.Group className="mb-3" controlId="cidade">
+                            <Form.Label>Cidade</Form.Label>
                             <Form.Control 
                                 type="text" 
-                                name="telefone"
-                                value={values.telefone}
-                                onChange={handleChange('telefone')}
+                                name="cidade"
+                                value={values.cidade}
+                                onChange={handleChange('cidade')}
                             />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="nascimento">
-                            <Form.Label>Data Nascimento</Form.Label>
+                        <Form.Group className="mb-3" controlId="pais">
+                            <Form.Label>Pais</Form.Label>
                             <Form.Control 
-                                type="date" 
-                                name="nascimento"
-                                value={values.nascimento}
-                                onChange={handleChange('nascimento')}
+                                type="text" 
+                                name="pais"
+                                value={values.pais}
+                                onChange={handleChange('pais')}
                             />
                         </Form.Group>
                         <div className="text-center">
