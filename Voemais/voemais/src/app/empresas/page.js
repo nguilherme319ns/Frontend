@@ -1,53 +1,100 @@
 'use client'
 
-import Pagina from "@/app/components/Pagina"
-import Link from "next/link"
-import { Table } from "react-bootstrap"
-import { IoIosAirplane } from "react-icons/io";
+import Pagina from "@/app/components/Pagina";
+import EmpresaValidator from "@/validators/EmpresaValidator";
+import { Formik } from "formik";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { Button, Form } from "react-bootstrap";
+import { FaCheck } from "react-icons/fa";
+import { IoIosArrowRoundBack } from "react-icons/io";
+import { v4 } from "uuid";
 
-export default function Page() {
+export default function Page({params}) {
 
-    //Para poder usar o .map em empresas, precisamos passar os dados para uma array, pois o localStorage retorna uma string
-    // const empresas = JSON.parse(localStorage.getItem('empresas'))
+const route = useRouter()
 
-    //COloque dentro da variavel empresas isso(local...) OU isso(no caso é [])
-    let empresas = JSON.parse(localStorage.getItem('empresas')) || []
-    //OBS: Tem como a gente utilizar o if e else também
+const empresas = JSON.parse(localStorage.getItem('empresas')) || []
+const dados = empresas.find(item=>item.id == params.id)
+const empresa = dados || { nome: '', logo: '', site: '' }
+
+
+function salvar(dados){
+
+    if(empresa.id){
+    Object.assign(empresa, dados)
+}else{
+    dados.id = v4()
+    empresas.push(dados)
+}
+    localStorage.setItem('empresas', JSON.stringify(empresas))
+    return route.push('/empresas')
+}
 
     return (
-        <Pagina titulo="Empresas">
-
-            <Link
-                href="/empresas/create"
-                className="btn btn-primary mb-3"
+        <Pagina titulo="Empresa">
+            
+            <Formik
+                initialValues={empresa}
+                validationSchema={EmpresaValidator}
+                onSubmit={values => salvar(values)}
             >
-                <IoIosAirplane />
-            </Link>
-
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Nome</th>
-                        <th>Logo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {empresas.map(item => (
-
-                        <tr>
-                            <td>1</td>
-                            <td>{item.nome}</td>
-                            <td>
-                                <a href={item.site} target="_blank">
-                                    <img src={item.logo} width={100} />
-                                </a>
-                            </td>
-                        </tr>
-
-                    ))}
-                </tbody>
-            </Table>
+                {({
+                    values,
+                    handleChange,
+                    handleSubmit,
+                    errors,
+                }) => {
+                    return (
+                        <Form>
+                            <Form.Group className="mb-3" controlId="nome">
+                                <Form.Label>Nome</Form.Label>
+                                <Form.Control 
+                                type="text"
+                                 name="nome"
+                                 value={values.nome}
+                                 onChange={handleChange('nome')}
+                                 isInvalid={errors.nome}
+                                  /> <Form.Control.Feedback type="invalid">
+                                  {errors.nome}
+                                </Form.Control.Feedback>
+                            </Form.Group>
+                            
+                            <Form.Group className="mb-3" controlId="logo">
+                                <Form.Label>Logo</Form.Label>
+                                <Form.Control type="text"
+                                 name="logo"
+                                 value={values.logo}
+                                 onChange={handleChange('logo')}
+                                 isInvalid={errors.logo}
+                                  />
+                                  <div className="text-danger">{errors.logo}</div>
+                            </Form.Group>
+    
+                            <Form.Group className="mb-3" controlId="site">
+                                <Form.Label>Site</Form.Label>
+                                <Form.Control type="text"
+                                 name="site"
+                                 value={values.site}
+                                 onChange={handleChange('site')}
+                                 isInvalid={errors.site}
+                                  />
+                                  <div className="text-danger">{errors.site}</div>
+                            </Form.Group>
+    
+                            <div className="text-center">
+                                <Button onClick={handleSubmit} variant="success">
+                                    Salvar  <FaCheck />
+                                </Button>
+                                <Link href="/empresas" className="btn btn-danger ms-3" >
+                                    <IoIosArrowRoundBack /> Voltar
+                                </Link>
+                            </div>
+                        </Form>
+                    )
+                } }
+            </Formik>
         </Pagina>
     )
 }
