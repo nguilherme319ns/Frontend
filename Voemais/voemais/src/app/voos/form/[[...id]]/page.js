@@ -9,9 +9,10 @@ import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { v4 } from "uuid";
+import { mask } from "remask"; // Importa a biblioteca remask para aplicar máscaras
 import VooValidator from "@/validators/VooValidator";
 
-
+// Schema de validação com Yup
 const vooSchema = Yup.object().shape({
     internacional: Yup.string().required('Campo obrigatório'),
     identificador: Yup.string().required('Campo obrigatório'),
@@ -55,6 +56,7 @@ export default function Page({ params }) {
                     touched,
                     handleChange,
                     handleSubmit,
+                    setFieldValue
                 }) => (
                     <Form>
                         <Form.Group className="mb-3" controlId="internacional">
@@ -74,7 +76,10 @@ export default function Page({ params }) {
                                 type="text" 
                                 name="identificador"
                                 value={values.identificador}
-                                onChange={handleChange('identificador')}
+                                onChange={(e) => {
+                                    const maskedValue = mask(e.target.value, ['AA999']); // Exemplo de máscara: código de voo (AA123)
+                                    setFieldValue('identificador', maskedValue);
+                                }}
                                 isInvalid={touched.identificador && !!errors.identificador}
                             />
                             <Form.Control.Feedback type="invalid">{errors.identificador}</Form.Control.Feedback>
@@ -140,7 +145,10 @@ export default function Page({ params }) {
                                 type="text" 
                                 name="preco"
                                 value={values.preco}
-                                onChange={handleChange('preco')}
+                                onChange={(e) => {
+                                    const maskedValue = mask(e.target.value, ['9999.99']); // Exemplo de máscara: formato de preço 9999.99
+                                    setFieldValue('preco', maskedValue);
+                                }}
                                 isInvalid={touched.preco && !!errors.preco}
                             />
                             <Form.Control.Feedback type="invalid">{errors.preco}</Form.Control.Feedback>

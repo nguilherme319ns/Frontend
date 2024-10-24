@@ -8,6 +8,7 @@ import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { v4 } from "uuid";
+import { mask } from "remask"; // Importando máscara
 import AeroportoValidator from "@/validators/AeroportoValidator"; // Importando o validador
 
 export default function Page({ params }) {
@@ -40,6 +41,7 @@ export default function Page({ params }) {
                     touched,
                     handleChange,
                     handleSubmit,
+                    setFieldValue, // Para aplicar máscaras
                 }) => (
                     <Form>
                         <Form.Group className="mb-3" controlId="nome">
@@ -61,7 +63,9 @@ export default function Page({ params }) {
                                 type="text" 
                                 name="codigo"
                                 value={values.codigo}
-                                onChange={handleChange('codigo')}
+                                onChange={(value) => {
+                                    setFieldValue('codigo', mask(value.target.value, ['AAA', 'AAAA'])) // máscara para IATA/ICAO
+                                }}
                                 isInvalid={!!errors.codigo && touched.codigo}
                             />
                             <Form.Control.Feedback type="invalid">

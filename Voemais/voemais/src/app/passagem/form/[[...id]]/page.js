@@ -9,6 +9,7 @@ import { Button, Form } from "react-bootstrap";
 import { FaCheck } from "react-icons/fa";
 import { IoIosArrowRoundBack } from "react-icons/io";
 import { v4 } from "uuid";
+import { mask } from "remask"; // Importa a biblioteca remask para aplicar máscaras
 import PassagemValidator from "@/validators/PassagemValidator";
 
 // Validação Yup
@@ -54,6 +55,7 @@ export default function Page({ params }) {
                     touched,
                     handleChange,
                     handleSubmit,
+                    setFieldValue // Para aplicar as máscaras
                 }) => (
                     <Form>
                         <Form.Group className="mb-3" controlId="voo">
@@ -95,7 +97,10 @@ export default function Page({ params }) {
                                 type="text" 
                                 name="preco"
                                 value={values.preco}
-                                onChange={handleChange('preco')}
+                                onChange={(e) => {
+                                    const maskedValue = mask(e.target.value, ['999.99']);
+                                    setFieldValue('preco', maskedValue);
+                                }}
                                 isInvalid={touched.preco && !!errors.preco}
                             />
                             <Form.Control.Feedback type="invalid">{errors.preco}</Form.Control.Feedback>
